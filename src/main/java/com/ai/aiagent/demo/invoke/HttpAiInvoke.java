@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class HttpAiInvoke {
 
-    // 修正后的 API 地址 (以 qwen3.5-flash 模型为例)
-    private static final String API_URL = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation";
+    // 修正后的 API 地址 (以 qwen3.5-flash 模型为例)，适用于多模态
+    private static final String API_URL = "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation";
 
     public static void main(String[] args) {
         // 请替换为你的实际 API Key
@@ -45,7 +45,7 @@ public class HttpAiInvoke {
         JSONObject requestBody = new JSONObject();
 
         // 1. 指定模型
-        requestBody.put("model", "qwen3.5-plus");
+        requestBody.put("model", "qwen3.5-flash");
 
         // 2. 构建消息列表 (遵循对话历史格式)
         JSONArray messages = new JSONArray();

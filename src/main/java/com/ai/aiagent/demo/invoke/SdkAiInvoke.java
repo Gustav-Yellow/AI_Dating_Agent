@@ -30,7 +30,7 @@ public class SdkAiInvoke {
                         Collections.singletonMap("text", "图中描绘的是什么景象?"))).build();
         MultiModalConversationParam param = MultiModalConversationParam.builder()
                 .apiKey(TestApiKey.API_KEY)
-                .model("qwen3.5-plus")
+                .model("qwen3.5-flash")
                 .messages(Arrays.asList(userMessage))
                 .build();
         MultiModalConversationResult result = conv.call(param);
