@@ -29,6 +29,7 @@ class LoveAppDocumentLoader {
         List<Document> allDocuments = new ArrayList<>();
         try {
             // 这里可以修改为你要加载的多个 Markdown 文件的路径模式
+            // 使用用于读取Markdown文档的DocumentReader类
             Resource[] resources = resourcePatternResolver.getResources("classpath:document/*.md");
             for (Resource resource : resources) {
                 String fileName = resource.getFilename();
@@ -39,6 +40,7 @@ class LoveAppDocumentLoader {
                         .withAdditionalMetadata("filename", fileName)
                         .build();
                 MarkdownDocumentReader reader = new MarkdownDocumentReader(resource, config);
+                // 这里的reader.get()会根据config中的配置，对读取到的resource中的文本内容进行切片，最后可能会返回多个Documents
                 allDocuments.addAll(reader.get());
             }
         } catch (IOException e) {

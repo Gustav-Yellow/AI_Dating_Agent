@@ -25,7 +25,8 @@ public class LoveAppRagCloudAdvisorConfig {
     public Advisor loveAppRagCloudAdvisor() {
         DashScopeApi dashScopeApi = new DashScopeApi(dashScopeApiKey);
         final String KNOWLEDGE_INDEX = "恋爱大师";
-        // 通过 Alibaba 的 DashScope 接口获取文档检索器，目标是检索恋爱大师的知识库
+        // 通过 Alibaba 的 DashScope 接口获取文档检索器，目标是检索恋爱大师知识库
+        // DocumentRetriever 返回的是云知识库中预先切分好的文本片段，每个片段都是独立的，包含原始文档的元数据信息。
         DocumentRetriever dashScopeDocumentRetriever = new DashScopeDocumentRetriever(dashScopeApi,
                 DashScopeDocumentRetrieverOptions.builder()
                         .withIndexName(KNOWLEDGE_INDEX)

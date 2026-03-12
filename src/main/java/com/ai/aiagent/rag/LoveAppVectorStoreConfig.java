@@ -16,10 +16,10 @@ public class LoveAppVectorStoreConfig {
     @Resource
     private LoveAppDocumentLoader loveAppDocumentLoader;
 
-    // 这里是最初默认设置的 VectorStore 实现，Bean会自动注入到 LoveApp 中
+    // 这里是最初默认设置的 VectorStore 实现，Bean会通过Resource注解自动注入到 LoveApp 中的同名变量
     @Bean
     VectorStore loveAppVectorStore(EmbeddingModel dashscopeEmbeddingModel) {
-        // 测试基于内存的向量数据库
+        // 测试基于本地内存的向量数据库
         SimpleVectorStore simpleVectorStore = SimpleVectorStore.builder(dashscopeEmbeddingModel).build();
         List<Document> documentList = loveAppDocumentLoader.loadMarkdowns();
         simpleVectorStore.add(documentList);

@@ -107,6 +107,9 @@ public class LoveApp {
     @Resource
     private Advisor loveAppRagCloudAdvisor;
 
+    @Resource
+    private VectorStore pgVectorVectorStore;
+
     public String doChatWithRag(String message, String chatId) {
         ChatResponse chatResponse = chatClient
                 .prompt()
@@ -118,7 +121,9 @@ public class LoveApp {
                 // 简单的情况是使用QuestionAnswerAdvisor，但是这个advisor会把所有向量库中的文档都查询一遍，所以这里使用自定义的advisor
                 // .advisors(new QuestionAnswerAdvisor(loveAppVectorStore)
                 // 应用增强检索服务（云知识库服务）
-                .advisors(loveAppRagCloudAdvisor)
+                // .advisors(loveAppRagCloudAdvisor)
+                // 应用 RAG 检索增强服务（基于云知识库服务）
+                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
                 .call()
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();
