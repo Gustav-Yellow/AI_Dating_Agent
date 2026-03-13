@@ -33,11 +33,14 @@ class LoveAppDocumentLoader {
             Resource[] resources = resourcePatternResolver.getResources("classpath:document/*.md");
             for (Resource resource : resources) {
                 String fileName = resource.getFilename();
+                // 将文件名倒数第3个字和倒数第2个字作为当前文件的状态
+                String status = fileName.substring(fileName.length()-6, fileName.length()-4);
                 MarkdownDocumentReaderConfig config = MarkdownDocumentReaderConfig.builder()
                         .withHorizontalRuleCreateDocument(true)
                         .withIncludeCodeBlock(false)
                         .withIncludeBlockquote(false)
                         .withAdditionalMetadata("filename", fileName)
+                        .withAdditionalMetadata("status", status) // 这里是根据文件名称获取状态，用于区分不同状态的文档
                         .build();
                 MarkdownDocumentReader reader = new MarkdownDocumentReader(resource, config);
                 // 这里的reader.get()会根据config中的配置，对读取到的resource中的文本内容进行切片，最后可能会返回多个Documents

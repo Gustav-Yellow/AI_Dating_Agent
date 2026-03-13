@@ -2,6 +2,8 @@ package com.ai.aiagent.app;
 
 import com.ai.aiagent.advisor.MyLoggerAdvisor;
 import com.ai.aiagent.chatmemory.FileBasedChatMemory;
+import com.ai.aiagent.rag.LoveAppRagCustomAdvisorFactory;
+import com.ai.aiagent.rag.QueryRewriter;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -101,29 +103,42 @@ public class LoveApp {
 
     // AI 恋爱RAG知识库问答功能
     // Resource会自动注入
-//    @Resource
-//    private VectorStore loveAppVectorStore;
+    @Resource
+    private VectorStore loveAppVectorStore;
 
+    // 基于阿里云知识库服务的RAG知识库问答功能
     @Resource
     private Advisor loveAppRagCloudAdvisor;
 
+    // 基于PGVector的RAG知识库问答功能
     @Resource
     private VectorStore pgVectorVectorStore;
 
+    // 查询重写
+    @Resource
+    private QueryRewriter queryRewriter;
+
     public String doChatWithRag(String message, String chatId) {
+        // 查询重写
+        String rewrittenMessage = queryRewriter.doQueryRewrite(message);
+
         ChatResponse chatResponse = chatClient
                 .prompt()
-                .user(message)
+                // 这里使用重写后的用户查询
+                .user(rewrittenMessage)
                 .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
                         .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
                 // 开启日志，便于观察效果
                 .advisors(new MyLoggerAdvisor())
                 // 简单的情况是使用QuestionAnswerAdvisor，但是这个advisor会把所有向量库中的文档都查询一遍，所以这里使用自定义的advisor
+                // 调用 loveAppVectorStore 类中实现的本地内存向量存储
                 // .advisors(new QuestionAnswerAdvisor(loveAppVectorStore)
-                // 应用增强检索服务（云知识库服务）
+                // 应用 RAG 增强检索服务（阿里云知识库服务）
                 // .advisors(loveAppRagCloudAdvisor)
-                // 应用 RAG 检索增强服务（基于云知识库服务）
-                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+                // 应用 RAG 检索增强服务（基于PGVector）
+                // .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+                // 调用自定义的 RAG 检索增强的 Advisor，这样我们可以限定只查询的范围
+                .advisors(LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(loveAppVectorStore, "单身"))
                 .call()
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();
