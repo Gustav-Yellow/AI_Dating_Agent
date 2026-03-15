@@ -7,13 +7,22 @@ spring:
     url: jdbc:postgresql://rm-cn-fsw4oz1x60001z8o.rwlb.rds.aliyuncs.com/ai_dating_agent
     username: root_user
     password: Root123456@
-    ai:
-      vectorstore:
-        pgvector:
-          index-type: HNSW
-          dimensions: 1536
-          distance-type: COSINE_DISTANCE
-          max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+  ai:
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        dimensions: 1536
+        distance-type: COSINE_DISTANCE
+        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+    mcp:
+#      client:
+#        stdio:
+#          servers-configuration: classpath:mcp-servers.json
+      client:
+        sse:
+          connections:
+            server1:
+              url: http://localhost:8127
 server:
   port: 8123
   servlet:
